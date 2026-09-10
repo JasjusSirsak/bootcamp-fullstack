@@ -1,6 +1,14 @@
 [
   {
-    "name": "Bonito",
-    "email": "bobon@gmail.com"
+    "name": "bonito",
+    "email": "bobo@gmail.com",
+    "phone": "08765987467",
+    "isActive": true
+  },
+  {
+    "name": "eril",
+    "email": "riri@gmail.com",
+    "phone": "098457351919",
+    "isActive": true
   }
 ]
