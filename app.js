@@ -38,32 +38,69 @@ const question = (pertanyaan) => {
 };
 
 const main = async () => {
-    const name = await question("Nama: ");
-    const email = await question("Email: ");
-    const phone = await question("No HP: ");
+    let name = "";
+    while (!name.trim()) {
+        name = await question("Nama: ");
+        if (!name.trim()) {
+            console.log("Nama tidak boleh kosong!");
+        }
+    }
 
-    if (!validator.isEmail(email)) {
-        console.log("Format email tidak valid");
-        // return; // Hentiin fungsi utama
+    // Paksa ulang jika format salah
+    let email = "";
+    while (!validator.isEmail(email)) {
+        email = await question("Email: ");
+        if (!validator.isEmail(email)) {
+            console.log("Format email tidak valid! Silakan masukkan email yang benar.\n");
+        }
     }
-    
-    if (!validator.isMobilePhone(phone, 'id-ID')) {
-        console.log("Nomor HP tidak valid");
-        // rl.close();
-        // return;
+
+    let phone = "";
+    while (!validator.isMobilePhone(phone, "id-ID")) {
+        phone = await question("No HP: ");
+        if (!validator.isMobilePhone(phone, "id-ID")) {
+            console.log("Nomor HP tidak valid untuk wilayah Indonesia ('id-ID')! Contoh: 081234567890\n");
+        }
     }
-    
-    rl.close();
-    // lolos validasi > langsung jadi json
+
+    // 4. Lolos Semua Validasi -> Baru Simpan ke JSON
     const newUser = { name, email, phone, isActive: true };
     users.push(newUser);
     fs.writeFileSync(fileName, JSON.stringify(users, null, 2));
 
-    console.log(`Terima kasih ${name}, data kamu berhasil dicatat!`);
+    console.log(`\nTerima kasih ${name}, data kamu berhasil dicatat secara valid!`);
+    
     rl.close();
 };
 
-main();
+main()
+
+// const main = async () => {
+//     const name = await question("Nama: ");
+//     const email = await question("Email: ");
+//     const phone = await question("No HP: ");
+
+//     if (!validator.isEmail(email)) {
+//         console.log("Format email tidak valid");
+//         // return; // Hentiin fungsi utama
+//     }
+    
+//     if (!validator.isMobilePhone(phone, 'id-ID')) {
+//         console.log("Nomor HP tidak valid");
+//         // rl.close();
+//     }
+    
+//     rl.close();
+//     // lolos validasi > langsung jadi json
+//     const newUser = { name, email, phone, isActive: true };
+//     users.push(newUser);
+//     fs.writeFileSync(fileName, JSON.stringify(users, null, 2));
+
+//     console.log(`Terima kasih ${name}, data kamu berhasil dicatat!`);
+//     rl.close();
+// };
+
+// main();
 
 // module.exports = { question, rl };
 
