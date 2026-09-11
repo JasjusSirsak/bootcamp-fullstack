@@ -10,5 +10,23 @@
     "email": "riri@gmail.com",
     "phone": "098457351919",
     "isActive": true
+  },
+  {
+    "name": "bintang",
+    "email": "b.callista.v@gmail.com",
+    "phone": "085659142479",
+    "isActive": true
+  },
+  {
+    "name": "qq",
+    "email": "qwe@123.com",
+    "phone": "08131543544",
+    "isActive": true
+  },
+  {
+    "name": "qwe",
+    "email": "tre",
+    "phone": "123",
+    "isActive": true
   }
 ]

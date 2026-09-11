@@ -11,10 +11,13 @@
 
 const fs = require("fs");
 const readline = require("readline");
+const validator = require("validator");
+
 
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
+
 });
 
 const fileName = "user.json";
@@ -26,24 +29,62 @@ if (fs.existsSync(fileName)) {
     users = JSON.parse(fileContent);
 }
 
-rl.question("Nama: ", (name) => {
-    rl.question("Email: ", (email) => {
-        rl.question("No HP: ", (phone) => {
-
-            // ini buat organisasiin variable mentah
-            const newUser = {
-                name,
-                email,
-                phone,
-                isActive: true
-            };
-
-            // lempar ke array di json
-            users.push(newUser);
-            fs.writeFileSync(fileName, JSON.stringify(users, null, 2));
-
-            console.log(`Data milik ${name} berhasil di tambahkan`);
-            rl.close();
+const question = (pertanyaan) => {
+    return new Promise((resolve) => {
+        rl.question(pertanyaan, (jawaban) => {
+            resolve(jawaban);
         });
     });
-});
+};
+
+const main = async () => {
+    const name = await question("Nama: ");
+    const email = await question("Email: ");
+    const phone = await question("No HP: ");
+
+    if (!validator.isEmail(email)) {
+        console.log("Format email tidak valid");
+        // return; // Hentiin fungsi utama
+    }
+    
+    if (!validator.isMobilePhone(phone, 'id-ID')) {
+        console.log("Nomor HP tidak valid");
+        // rl.close();
+        // return;
+    }
+    
+    rl.close();
+    // lolos validasi > langsung jadi json
+    const newUser = { name, email, phone, isActive: true };
+    users.push(newUser);
+    fs.writeFileSync(fileName, JSON.stringify(users, null, 2));
+
+    console.log(`Terima kasih ${name}, data kamu berhasil dicatat!`);
+    rl.close();
+};
+
+main();
+
+// module.exports = { question, rl };
+
+// rl.question("Nama: ", (name) => {
+//     rl.question("Email: ", (email) => {
+//         rl.question("No HP: ", (phone) => {
+
+//             // ini buat organisasiin variable mentah
+//             const newUser = {
+//                 name,
+//                 email,
+//                 phone,
+//                 isActive: true
+//             };
+
+//             // lempar ke array di json
+//             users.push(newUser);
+//             fs.writeFileSync(fileName, JSON.stringify(users, null, 2));
+
+//             console.log(`Data milik ${name} berhasil di tambahkan`);
+//             rl.close();
+//         });
+//     });
+// });
