@@ -10,7 +10,7 @@ async function getUsers() {
   const result = await pool.query('SELECT * FROM users ORDER BY id');
   return result.rows;
 }
-//aku teh tapi coba ini teh buat manggil data
+//coba ini teh buat manggil data
 // async function jalanin() {
 //   try {
 //     console.log("berhasil tersambung, data table;")

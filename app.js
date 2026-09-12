@@ -42,11 +42,11 @@ const main = async () => {
     while (!name.trim()) {
         name = await question("Nama: ");
         if (!name.trim()) {
-            console.log("Nama tidak boleh kosong!");
+          console.log("Nama tidak boleh kosong!");
         }
     }
 
-    // Paksa ulang jika format salah
+    // Paksa ulang kalo format salah
     let email = "";
     while (!validator.isEmail(email)) {
         email = await question("Email: ");
@@ -63,7 +63,7 @@ const main = async () => {
         }
     }
 
-    // 4. Lolos Semua Validasi -> Baru Simpan ke JSON
+    // kalau semua nya bener -> baru simpan ke JSON
     const newUser = { name, email, phone, isActive: true };
     users.push(newUser);
     fs.writeFileSync(fileName, JSON.stringify(users, null, 2));

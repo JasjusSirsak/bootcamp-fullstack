@@ -16,5 +16,11 @@
     "email": "boo@gmail.com",
     "phone": "085659142479",
     "isActive": true
-  }
+  },
+  {
+    "name": "deril",
+    "email": "deril@gmail.com",
+    "phone": "0897456864",
+    "isActive": true
+  },
 ]
