@@ -1,6 +1,8 @@
 [
   {
-    "nama": "Budi",
-    "umur": 20
+    "name": "Budi",
+    "email": "budi@gmail.com",
+    "phone": "081234567890",
+    "isActive": true
   }
 ]

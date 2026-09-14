@@ -1,46 +1,79 @@
 const fs = require('fs');
+const validator = require('validator');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 
 const fileName = 'user1.json';
 
-// ngmbil data lama
+// buat baca data kama, darai app.js
 let users = [];
 if (fs.existsSync(fileName)) {
   try {
     const fileContent = fs.readFileSync(fileName, 'utf-8');
-    // jauhin error klo json kosong
     users = fileContent ? JSON.parse(fileContent) : [];
   } catch (error) {
     users = [];
   }
 }
 
-// form
-const argv = yargs(hideBin(process.argv))
-  .option('nama', {
-    alias: 'n',
-    type: 'string',
-    description: 'Nama pengguna',
-    demandOption: true
-  })
-  .option('umur', {
-    alias: 'u',
-    type: 'number',
-    description: 'Umur pengguna'
+// Inisialisasi Yargs Form
+yargs(hideBin(process.argv))
+  .command({
+    command: 'tambah',
+    describe: 'Menambahkan data pengguna baru',
+    builder: {
+      nama: {
+        alias: 'n',
+        type: 'string',
+        demandOption: true,
+        describe: 'Nama pengguna'
+      },
+      email: {
+        alias: 'e',
+        type: 'string',
+        demandOption: true,
+        describe: 'Email pengguna'
+      },
+      phone: {
+        alias: 'p',
+        type: 'string',
+        demandOption: true,
+        describe: 'Nomor HP Indonesia'
+      }
+    },
+    handler(argv) {
+      // Validasi Format Email
+      if (!validator.isEmail(argv.email)) {
+        console.log('Error: Format email tidak valid!');
+        return;
+      }
+
+      // Validasi Format Nomor HP
+      if (!validator.isMobilePhone(argv.phone, 'id-ID')) {
+        console.log('Error: Nomor HP tidak valid untuk wilayah Indonesia!');
+        return;
+      }
+
+      // VALIDASI TAMBAHAN: Cek Duplikasi (Email harus unik)
+      const isDuplicate = users.some(user => user.email === argv.email);
+      if (isDuplicate) {
+        console.log('Error: Email ini sudah terdaftar!');
+        return;
+      }
+
+      // Jika lolos semua validasi -> Simpan ke JSON
+      const newUser = {
+        name: argv.nama,
+        email: argv.email,
+        phone: argv.phone,
+        isActive: true
+      };
+
+      users.push(newUser);
+      fs.writeFileSync(fileName, JSON.stringify(users, null, 2));
+
+      console.log(`\nTerima kasih ${argv.nama}, data kamu berhasil dicatat secara valid!`);
+    }
   })
   .help()
-  .argv;
-
-// ratain tuh data jadi kek table variable di array + simpendiJSON
-const newUser = {
-  nama: argv.nama,
-  umur: argv.umur ?? 'tidak diisi'
-};
-
-users.push(newUser);
-
-// Tulis kembali ke user1.json
-fs.writeFileSync(fileName, JSON.stringify(users, null, 2));
-
-console.log(`Berhasil disimpan ke ${fileName}! Halo ${argv.nama}, umur: ${argv.umur ?? 'tidak diisi'}`);
+  .parse(); //standar terbaru Yargs untuk mengeksekusi perintah
