@@ -6,15 +6,15 @@
     "isActive": true
   },
   {
-    "name": "emak",
-    "email": "mama@gmail.com",
-    "phone": "085659123459",
-    "isActive": true
-  },
-  {
     "name": "serepet23",
     "email": "wadidaw@gmail.com",
     "phone": "085612345679",
+    "isActive": true
+  },
+  {
+    "name": "emak",
+    "email": "mamak@gmail.com",
+    "phone": "085659141234",
     "isActive": true
   }
 ]
