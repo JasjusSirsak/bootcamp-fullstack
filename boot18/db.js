@@ -1,28 +1,44 @@
-//dia yang ngambil kunci env buat ke database
-require('dotenv').config(); 
-const { Pool } = require('pg')
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
-});
+const fs = require('fs');
+const path = require('path');
 
-//ini teh fungsi
-async function getUsers() {
-  const result = await pool.query('SELECT * FROM users ORDER BY id');
-  return result.rows;
+const fileName = path.join(__dirname, 'users.json');
+
+function loadUsers() {
+  if (!fs.existsSync(fileName)) return [];
+  try {
+    const fileContent = fs.readFileSync(fileName, 'utf-8');
+    return fileContent ? JSON.parse(fileContent) : [];
+  } catch (error) {
+    return [];
+  }
 }
-//coba ini teh buat manggil data
-// async function jalanin() {
-//   try {
-//     console.log("berhasil tersambung, data table;")
-//     console.table(getUsers());
-//       } catch (error) {
-//             console.error("Waduh, ada error nih ❌ :", error.message);
-//   } finally {
-//       }
-// }
 
-getUsers()
-  .then(data => console.log(data))
-  .catch(err => console.error ('error fetching user',err));
+function saveUsers(users) {
+  fs.writeFileSync(fileName, JSON.stringify(users, null, 2));
+}
 
-    
+function addUser(user) {
+  const users = loadUsers();
+  users.unshift(user);
+  saveUsers(users);
+  return user;
+}
+
+function findUserByName(name) {
+  const users = loadUsers();
+  return users.find(u => u.name === name);
+}
+
+//find user by phone biar unik karena email takut ada yang duplikasi dan nama pula sama
+function findUserByPhone(phone) {
+  const users = loadUsers();
+  return users.find(u => u.phone === phone);
+}
+
+module.exports = {
+  loadUsers,
+  saveUsers,
+  addUser,
+  findUserByName,
+  findUserByPhone
+};
