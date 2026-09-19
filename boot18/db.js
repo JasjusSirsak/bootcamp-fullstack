@@ -1,44 +1,71 @@
-const fs = require('fs');
 const path = require('path');
+const { Pool } = require('pg');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
-const fileName = path.join(__dirname, 'users.json');
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL
+});
 
-function loadUsers() {
-  if (!fs.existsSync(fileName)) return [];
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle PostgreSQL client', err);
+});
+
+// Ambil semua user dari database PostgreSQL
+async function loadUsers() {
   try {
-    const fileContent = fs.readFileSync(fileName, 'utf-8');
-    return fileContent ? JSON.parse(fileContent) : [];
+    const res = await pool.query('SELECT * FROM users ORDER BY id DESC');
+    return res.rows;
   } catch (error) {
+    console.error('Error fetching users from DB:', error);
     return [];
   }
 }
 
-function saveUsers(users) {
-  fs.writeFileSync(fileName, JSON.stringify(users, null, 2));
+// Tambah user baru ke database PostgreSQL
+async function addUser({ name, phone, email, role, status }) {
+  const query = `
+    INSERT INTO users (name, phone, email, role, status, created_at, updated_at)
+    VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+    RETURNING *;
+  `;
+  const values = [
+    name,
+    phone,
+    email || null,
+    role || 'User',
+    status || 'Aktif'
+  ];
+
+  const res = await pool.query(query, values);
+  return res.rows[0];
 }
 
-function addUser(user) {
-  const users = loadUsers();
-  users.unshift(user);
-  saveUsers(users);
-  return user;
+// Cari user berdasarkan nomor telepon
+async function findUserByPhone(phone) {
+  try {
+    const res = await pool.query('SELECT * FROM users WHERE phone = $1', [phone]);
+    return res.rows[0] || null;
+  } catch (error) {
+    console.error('Error finding user by phone:', error);
+    return null;
+  }
 }
 
-function findUserByName(name) {
-  const users = loadUsers();
-  return users.find(u => u.name === name);
-}
-
-//find user by phone biar unik karena email takut ada yang duplikasi dan nama pula sama
-function findUserByPhone(phone) {
-  const users = loadUsers();
-  return users.find(u => u.phone === phone);
+// Cari user berdasarkan nama
+async function findUserByName(name) {
+  try {
+    const res = await pool.query('SELECT * FROM users WHERE name = $1', [name]);
+    return res.rows[0] || null;
+  } catch (error) {
+    console.error('Error finding user by name:', error);
+    return null;
+  }
 }
 
 module.exports = {
+  pool,
   loadUsers,
-  saveUsers,
   addUser,
-  findUserByName,
-  findUserByPhone
+  findUserByPhone,
+  findUserByName
 };

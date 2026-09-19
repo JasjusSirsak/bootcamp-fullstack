@@ -265,7 +265,8 @@ nav a.active {
 
 input[type="text"],
 input[type="tel"],
-input[type="email"] {
+input[type="email"],
+select { /* <--- GANTI input[type="radio"] MENJADI select */
   width: 100%;
   padding: 10px 14px;
   font-size: 0.95rem;
@@ -276,6 +277,10 @@ input[type="email"] {
   color: var(--text-main);
   outline: none;
   transition: all 0.2s ease;
+  
+  /* Tambahan khusus untuk select agar tingginya pas dengan input */
+  height: 42px; 
+  box-sizing: border-box;
 }
 
 input:focus {
@@ -387,4 +392,304 @@ input:focus {
   height: 32px;
   margin-bottom: 8px;
   opacity: 0.5;
+}
+/* =========================================
+   PROFILE CARD STYLE (Tambahan)
+   ========================================= */
+.profile-card {
+  background: #ffffff;
+  width: 100%; /* Biar ukurannya ngikutin kolom grid secara fleksibel */
+  border-radius: 32px;
+  padding: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.profile-card:hover {
+  transform: translateY(-4px);
+}
+
+.card-image-wrapper {
+  width: 100%;
+  height: 280px;
+  border-radius: 24px;
+  overflow: hidden;
+  background-color: #e5e7eb;
+  margin-bottom: 16px;
+}
+
+.card-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 0 8px;
+}
+
+.name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.name-row h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.badge-icon {
+  width: 18px;
+  height: 18px;
+  color: #10b981;
+  fill: #10b981;
+  stroke: white;
+  stroke-width: 2;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 0 16px 0;
+  line-height: 1.4;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.stats {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  color: #111827;
+  font-weight: 500;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-item i {
+  width: 16px;
+  height: 16px;
+  color: #6b7280;
+}
+
+.btn-follow {
+  background: #f3f4f6;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-follow:hover {
+  background: #e5e7eb;
+}
+
+/* --- MODAL --- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 24px;
+  padding: 24px;
+  position: relative;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-overlay.active .modal-content {
+  transform: translateY(0);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: #f3f4f6;
+  border: none;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.modal-avatar {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 12px;
+  border: 3px solid white;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.modal-avatar img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #111827;
+}
+
+.modal-header p {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 12px;
+}
+
+.detail-item i {
+  color: #6b7280;
+  width: 20px; height: 20px;
+}
+
+.detail-text span {
+  display: block;
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-text strong {
+  font-size: 14px;
+  color: #111827;
+}
+
+/* Grid Layout untuk user-grid */
+.user-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 24px;
+}
+/* ====== TAMBAHKAN INI KE style.css ====== */
+
+/* 1. Bikin semua profile-card punya struktur sejajar meski isi teks beda panjang */
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* biar tinggi kartu seragam dalam satu baris grid */
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between; /* nama di atas, subtitle nempel rapi di bawahnya */
+  gap: 6px;
+}
+
+/* 2. Icon + teks sejajar secara vertikal (bukan icon nongol sendiri di atas/bawah teks) */
+.name-row,
+.subtitle,
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.subtitle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* email/no hp kepanjangan dipotong rapi, bukan bikin card melar */
+}
+
+/* 3. Grid card biar rata kolom & barisnya */
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  align-items: stretch; /* penting: bikin semua card di baris yang sama tingginya sama */
+  gap: 16px;
+}
+
+/* 5. Badge status pada card */
+.status-badge {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.status-badge.status-on {
+  background: #dcfce7;
+  color: #16a34a;
+}
+.status-badge.status-off {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* 4. Form label + icon sejajar juga */
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }

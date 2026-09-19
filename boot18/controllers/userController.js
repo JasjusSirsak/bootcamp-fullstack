@@ -1,46 +1,68 @@
 const db = require('../db');
 const { validateUserData } = require('../utils/userValidator');
 
-// GET /users
-const getUsers = (req, res) => {
-  const users = db.loadUsers();
-  res.json({
-    status: 'success',
-    total: users.length,
-    data: users
-  });
+// 1. Khusus RENDER Halaman EJS (GET /user)
+const getUserPage = async (req, res, next) => {
+  try {
+    const users = await db.loadUsers();
+    console.log('=== DATA USERS DARI DB ===', users);
+    res.render('user', { users });
+  } catch (error) {
+    next(error);
+  }
 };
 
-// POST /add-user
-const addUser = (req, res) => {
-  const { nama, phone, email } = req.body;
-
-  // Jalankan validasi dari utils
-  const validation = validateUserData({ nama, phone, email });
-  if (!validation.isValid) {
-    return res.status(validation.statusCode).json({
-      status: 'fail',
-      message: validation.message
+// 2. Khusus API JSON Daftar User (GET /user/api)
+const getUsers = async (req, res, next) => {
+  try {
+    const users = await db.loadUsers();
+    res.json({
+      status: 'success',
+      total: users.length,
+      data: users
     });
+  } catch (error) {
+    next(error);
   }
+};
 
-  const newUser = {
-    name: nama,
-    phone,
-    email: email || null,
-    created_at: new Date().toISOString()
-  };
+// 3. POST Tambah User (POST /user/add-user)
+const addUser = async (req, res, next) => {
+  try {
+    const { name, phone, email, role, status } = req.body;
 
-  db.addUser(newUser);
+    const validation = await validateUserData({ name, phone, email });
+    if (!validation.isValid) {
+      return res.status(validation.statusCode).json({
+        status: 'fail',
+        message: validation.message
+      });
+    }
 
-  res.status(201).json({
-    status: 'success',
-    message: `Terima kasih ${nama}, data kamu berhasil dicatat!`,
-    data: newUser
-  });
+    // Default aman kalau field role/status tidak dikirim dari form
+    const allowedRoles = ['User', 'Admin'];
+    const allowedStatus = ['Aktif', 'Nonaktif'];
+
+    const newUser = await db.addUser({
+      name,
+      phone,
+      email: email || null,
+      role: allowedRoles.includes(role) ? role : 'User',
+      status: allowedStatus.includes(status) ? status : 'Aktif'
+    });
+
+    res.status(201).json({
+      status: 'success',
+      message: `Terima kasih ${name}, data kamu berhasil dicatat!`,
+      data: newUser
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
+  getUserPage,
   getUsers,
   addUser
 };

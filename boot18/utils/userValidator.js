@@ -3,11 +3,11 @@ const db = require('../db');
 
 /**
  * Memvalidasi payload pembuatan user baru
- * @param {Object} data - { nama, phone, email }
- * @returns {Object} { isValid: boolean, message: string|null, statusCode: number|null }
+ * @param {Object} data - { name, phone, email }
+ * @returns {Promise<Object>} { isValid: boolean, message: string|null, statusCode: number|null }
  */
-function validateUserData({ nama, phone, email }) {
-  if (!nama || !phone) {
+async function validateUserData({ name, phone, email }) {
+  if (!name || !phone) {
     return {
       isValid: false,
       statusCode: 400,
@@ -15,11 +15,11 @@ function validateUserData({ nama, phone, email }) {
     };
   }
 
-  if (!validator.isMobilePhone(phone, 'id-ID')) {
+  if (!validator.isMobilePhone(phone, 'any')) {
     return {
       isValid: false,
       statusCode: 400,
-      message: 'Nomor HP tidak valid untuk wilayah Indonesia!'
+      message: 'Format nomor HP tidak valid!'
     };
   }
 
@@ -31,7 +31,8 @@ function validateUserData({ nama, phone, email }) {
     };
   }
 
-  if (db.findUserByPhone(phone)) {
+  const existingUser = await db.findUserByPhone(phone);
+  if (existingUser) {
     return {
       isValid: false,
       statusCode: 409,

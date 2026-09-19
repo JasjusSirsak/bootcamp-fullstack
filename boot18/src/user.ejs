@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Page</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <%- include('komponen/navbar') %>
+
+  <div class="container">
+    <div class="header-section">
+      <h1>Halaman User</h1>
+      <p>Kelola dan tambahkan data user ke dalam sistem.</p>
+    </div>
+
+    <!-- Form Tambah User -->
+    <div class="card form-card">
+      <h2><i data-lucide="user-plus"></i> Tambah User Baru</h2>
+      <form id="user-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name"><i data-lucide="user"></i> Nama Lengkap</label>
+            <input type="text" id="name" placeholder="Masukkan nama..." required>
+          </div>
+          <div class="form-group">
+            <label for="phone"><i data-lucide="phone"></i> No. HP</label>
+            <input type="tel" id="phone" placeholder="08xxxxxxxxxx" required>
+          </div>
+          <div class="form-group">
+            <label for="email"><i data-lucide="mail"></i> Alamat Email</label>
+            <input type="email" id="email" placeholder="email@contoh.com">
+          </div>
+          <div class="form-group">
+            <label for="role"><i data-lucide="shield"></i> Role</label>
+            <select id="role">
+              <option value="User">User</option>
+              <option value="Admin">Admin</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="status"><i data-lucide="activity"></i> Status</label>
+            <select id="status">
+              <option value="Aktif">Aktif</option>
+              <option value="Nonaktif">Nonaktif</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">
+          <i data-lucide="plus-circle"></i> Tambah User
+        </button>
+      </form>
+      <p id="status-msg" class="status-msg"></p>
+    </div>
+
+    <!-- Section Card Profil User -->
+    <div class="card-section">
+      <div class="section-header">
+        <h2><i data-lucide="users"></i> Daftar Profil User</h2>
+      </div>
+
+      <div class="user-grid" id="user-grid">
+        <% if (typeof users === 'undefined' || !users || users.length === 0) { %>
+          <div class="empty-state">
+            <i data-lucide="inbox"></i>
+            <p>Belum ada data user tersedia.</p>
+          </div>
+        <% } else { %>
+          <% users.forEach(user => { %>
+            <%- include('komponen/user-card', { user: user }) %>
+          <% }); %>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <%- include('komponen/modal-user') %>
+
+  <script>
+    // Inisialisasi Icon
+    if (window.lucide) lucide.createIcons();
+
+    // Submit Form Tambah User
+    document.getElementById('user-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const role = document.getElementById('role').value;
+      const status = document.getElementById('status').value;
+      const statusMsg = document.getElementById('status-msg');
+
+      fetch('/user/add-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ name, phone, email, role, status })
+      })
+      .then(res => res.json())
+      .then(result => {
+        statusMsg.className = 'status-msg';
+        if (result.status === 'success') {
+          statusMsg.classList.add('success');
+          statusMsg.innerHTML = '<i data-lucide="check-circle"></i> ' + result.message;
+          document.getElementById('user-form').reset();
+          setTimeout(() => window.location.reload(), 1000);
+        } else {
+          statusMsg.classList.add('error');
+          statusMsg.innerHTML = '<i data-lucide="alert-circle"></i> ' + result.message;
+        }
+        if (window.lucide) lucide.createIcons();
+      })
+      .catch(err => {
+        statusMsg.className = 'status-msg error';
+        statusMsg.innerHTML = '<i data-lucide="alert-circle"></i> Error: ' + err.message;
+        if (window.lucide) lucide.createIcons();
+      });
+    });
+  </script>
+</body>
+</html>

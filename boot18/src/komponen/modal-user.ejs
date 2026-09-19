@@ -1,0 +1,94 @@
+<!-- MODAL DETAIL PROFILE -->
+<div id="profile-modal" class="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div class="modal-header">
+      <div class="modal-avatar">
+        <img id="modal-img" src="" alt="User Avatar">
+      </div>
+      <h2 id="modal-name">Nama User</h2>
+      <p>Detail Anggota Sistem</p>
+    </div>
+    <div class="detail-list">
+      <div class="detail-item">
+        <i data-lucide="shield"></i>
+        <div class="detail-text">
+          <span>Role</span>
+          <strong id="modal-role">-</strong>
+        </div>
+      </div>
+      <div class="detail-item">
+        <i data-lucide="activity"></i>
+        <div class="detail-text">
+          <span>Status</span>
+          <strong id="modal-status">-</strong>
+        </div>
+      </div>
+      <div class="detail-item">
+        <i data-lucide="phone"></i>
+        <div class="detail-text">
+          <span>No. HP</span>
+          <strong id="modal-phone">-</strong>
+        </div>
+      </div>
+      <div class="detail-item">
+        <i data-lucide="mail"></i>
+        <div class="detail-text">
+          <span>Email</span>
+          <strong id="modal-email">-</strong>
+        </div>
+      </div>
+      <div class="detail-item">
+        <i data-lucide="calendar"></i>
+        <div class="detail-text">
+          <span>Tanggal Bergabung</span>
+          <strong id="modal-date">-</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Fungsi Buka Modal
+  function openModal(element) {
+    const name = element.getAttribute('data-name');
+    const phone = element.getAttribute('data-phone');
+    const email = element.getAttribute('data-email');
+    const createdRaw = element.getAttribute('data-created'); // FIX: sebelumnya salah baca 'data-created_at'
+    const role = element.getAttribute('data-role') || '-';
+    const status = element.getAttribute('data-status') || '-';
+
+    let formattedDate = '-';
+    if (createdRaw && createdRaw !== '-' && createdRaw !== '') {
+      const dateObj = new Date(createdRaw);
+      if (!isNaN(dateObj.getTime())) {
+        formattedDate = dateObj.toLocaleDateString('id-ID', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+      }
+    }
+
+    document.getElementById('modal-name').innerText = name;
+    document.getElementById('modal-role').innerText = role;
+    document.getElementById('modal-status').innerText = status;
+    document.getElementById('modal-phone').innerText = phone;
+    document.getElementById('modal-email').innerText = email;
+    document.getElementById('modal-date').innerText = formattedDate;
+    document.getElementById('modal-img').src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`;
+
+    document.getElementById('profile-modal').classList.add('active');
+    if (window.lucide) lucide.createIcons();
+  }
+
+  // Fungsi Tutup Modal
+  function closeModal() {
+    document.getElementById('profile-modal').classList.remove('active');
+  }
+
+  function closeModalOutside(event) {
+    if (event.target.id === 'profile-modal') closeModal();
+  }
+</script>
