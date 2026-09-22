@@ -1,0 +1,43 @@
+:root {
+  /* Teks kontras, rapi, dan mudah dibaca */
+  --text: #475569;        /* Slate Grey */
+  --text-h: #0f172a;      /* Dark Navy untuk Judul */
+  
+  /* Latar belakang terang lembut (off-white, tidak silau) */
+  --bg: #f8fafc;          /* Sangat cerah dan bersih */
+  --border: #e2e8f0;      /* Border halus */
+  --code-bg: #edf2f7;      
+
+  /* Card & Komponen */
+  --card-bg: #ffffff;     /* Kartu user warna putih bersih */
+
+  /* Aksesori & Accent Manager Vibes (Executive Blue) */
+  --accent: #2563eb;      
+  --accent-bg: rgba(37, 99, 235, 0.08);
+  --accent-border: rgba(37, 99, 235, 0.3);
+  --social-bg: rgba(226, 232, 240, 0.6);
+  
+  --shadow:
+    rgba(15, 23, 42, 0.08) 0 10px 15px -3px,  
+    rgba(15, 23, 42, 0.04) 0 4px 6px -2px;
+
+  --sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light; /* Memaksa elemen menggunakan light theme */
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+/* Pastikan tidak ada blok @media (prefers-color-scheme: dark) di bawahnya */
