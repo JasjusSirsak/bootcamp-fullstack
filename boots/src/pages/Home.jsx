@@ -1,12 +1,60 @@
-import { Users, UserCheck, UserX, TrendingUp } from 'lucide-react';
-
-const stats = [
-  { label: 'Total User', value: 128, icon: Users, tone: 'default' },
-  { label: 'User Aktif', value: 96, icon: UserCheck, tone: 'success' },
-  { label: 'User Nonaktif', value: 32, icon: UserX, tone: 'danger' },
-];
+import { useState, useEffect } from 'react';
+import { Users, UserCheck, UserX, Loader2, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { getUsers } from '../api/userApi';
 
 function Home() {
+  const [stats, setStats] = useState({
+    total: 0,
+    active: 0,
+    inactive: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadStats() {
+      try {
+        setLoading(true);
+        const users = await getUsers();
+        const total = users.length;
+        const active = users.filter((u) => {
+          const s = (u.status || '').toUpperCase();
+          return s === 'ACTIVE' || s === 'AKTIF';
+        }).length;
+        const inactive = total - active;
+
+        setStats({ total, active, inactive });
+      } catch (err) {
+        console.error('Failed to load stats:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadStats();
+  }, []);
+
+  const statCards = [
+    {
+      label: 'Total User Terdaftar',
+      value: loading ? '...' : stats.total,
+      icon: Users,
+      tone: 'accent',
+    },
+    {
+      label: 'User Aktif',
+      value: loading ? '...' : stats.active,
+      icon: UserCheck,
+      tone: 'success',
+    },
+    {
+      label: 'User Nonaktif / Lainnya',
+      value: loading ? '...' : stats.inactive,
+      icon: UserX,
+      tone: 'danger',
+    },
+  ];
+
   return (
     <div className="page">
       <div className="page-header">
@@ -14,15 +62,19 @@ function Home() {
           Selamat datang kembali <span className="wave-emoji">👋</span>
         </h1>
         <p className="page-subtitle">
-          Berikut ringkasan aktivitas user pada aplikasi kamu hari ini.
+          Data statistik user di bawah ditarik langsung dari database PostgreSQL secara realtime.
         </p>
       </div>
 
       <div className="stats-grid">
-        {stats.map(({ label, value, icon: Icon, tone }) => (
+        {statCards.map(({ label, value, icon: Icon, tone }) => (
           <div className={`stat-card tone-${tone}`} key={label}>
             <div className="stat-icon">
-              <Icon size={20} strokeWidth={2} />
+              {loading ? (
+                <Loader2 size={20} className="spin-animation" />
+              ) : (
+                <Icon size={20} strokeWidth={2} />
+              )}
             </div>
             <div className="stat-text">
               <p className="stat-value">{value}</p>
@@ -32,11 +84,17 @@ function Home() {
         ))}
       </div>
 
-      <div className="hint-card">
-        <p>
-          Buka menu <strong>Users</strong> di navbar untuk melihat, mencari, dan mengelola
-          seluruh user yang terdaftar.
-        </p>
+      <div className="home-action-card">
+        <div>
+          <h3 className="action-card-title">Mulai Kelola User</h3>
+          <p className="action-card-subtitle">
+            Buka menu Users untuk menambah, mengedit, mencari, dan menghapus user dari database.
+          </p>
+        </div>
+        <Link to="/users" className="btn btn-primary">
+          <span>Buka Daftar User</span>
+          <ArrowRight size={16} />
+        </Link>
       </div>
     </div>
   );
